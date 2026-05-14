@@ -3,8 +3,8 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const appApi = createApi({
   reducerPath: "appApi",
   baseQuery: fetchBaseQuery({
-    // baseUrl: "http://localhost:8000",
-    baseUrl:"https://blog-app-krishna306.vercel.app/",
+    // baseUrl: "http://localhost:8080",
+    baseUrl:"https://blog-app-ruby-sigma.vercel.app/",
     prepareHeaders: (headers, { getState }) => {
       const token = getState().user.token;
       if (token) {
