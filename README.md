@@ -1,70 +1,76 @@
-# Getting Started with Create React App
+# Inkline
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Inkline is an editorial blog for engineering notes: short, readable stories with a magazine-style layout. Readers browse by topic; writers publish, edit, and manage their own work.
 
-## Available Scripts
+This repository is the **web app**.
 
-In the project directory, you can run:
+## What it does
 
-### `npm start`
+- Shows a home feed of latest stories, with a featured piece at the top
+- Lets anyone read a full article, including cover image, category, date, reading time, and author
+- Helps readers continue with related and next stories
+- Lets people create an account, sign in, and stay signed in across visits
+- Lets signed-in writers compose a story with a title, category, cover image, and rich text
+- Lets writers update or delete only their own stories
+- Keeps the feed fast with cached lists and article pages on the server
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Features
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Reading
 
-### `npm test`
+- Featured story on the first page of the feed
+- Category chips: Technology, Travel, Web design, Programming, AI, and Other
+- Paginated grid of story cards
+- Sidebar of stories on the current page
+- Article page with cover, byline, and readable body
+- Estimated reading time
+- “Keep reading” suggestions in the same category
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Writing
 
-### `npm run build`
+- Dedicated compose view for a new story
+- Cover image upload (JPG or PNG, up to 10MB)
+- Category selection
+- Rich-text editor (headings, lists, links, formatting)
+- Edit flow that loads the full story, not a truncated preview
+- Confirmation before deleting a story
+- “My articles” list of everything you have published
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Account
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- Sign up and log in
+- Account menu with avatar initial, name, and email
+- Shortcuts to write and to your articles
+- Log out that clears the session even if the network request fails
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Design
 
-### `npm run eject`
+- Paper-and-ink editorial theme (serif titles, sans UI, teal accent)
+- Inkline mark in the nav and as the browser icon
+- Responsive layout for feed, article, and compose
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Stack
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- React
+- Redux Toolkit and RTK Query
+- React Router
+- Bootstrap / React Bootstrap
+- Draft.js editor
+- Session persistence in the browser
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+The app talks to the [Inkline server](https://github.com/krishna306/BlogApp).
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Run locally
 
-## Learn More
+```bash
+npm install
+npm start
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Build for production:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```bash
+npm run build
+```
 
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Point the app at your running server before starting it. Do not commit secrets or environment files.
