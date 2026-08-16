@@ -1,9 +1,13 @@
-import React from 'react'
-const year  = new Date().getFullYear();
+import React from "react";
+
+const year = new Date().getFullYear();
+
 function Footer() {
   return (
-    <div className='bg-light mt-4 py-4 text-center'>Copyright {year} @Krishna Kumar</div>
-  )
+    <footer className="site-footer mt-4 py-4 text-center">
+      Inkline · {year}
+    </footer>
+  );
 }
 
-export default Footer
+export default Footer;

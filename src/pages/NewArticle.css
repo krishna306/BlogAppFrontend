@@ -1,13 +1,126 @@
+.compose-stack {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.compose-title {
+  font-family: var(--serif);
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  margin: 0 0 0.35rem;
+}
+
+.compose-kicker {
+  color: var(--muted);
+  margin: 0 0 1.75rem;
+}
+
+.compose-block {
+  margin-bottom: 1.75rem;
+}
+
+.compose-label {
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.65rem;
+}
+
+.compose-title-input {
+  border: none !important;
+  border-bottom: 1px solid var(--line) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  font-family: var(--serif) !important;
+  font-size: 1.75rem !important;
+  padding: 0.35rem 0 0.7rem !important;
+  box-shadow: none !important;
+}
+
+.compose-title-input:focus {
+  border-bottom-color: var(--accent) !important;
+  box-shadow: none !important;
+}
+
+.compose-cover {
+  position: relative;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--paper);
+}
+
+.cover-frame,
+.cover-placeholder {
+  width: 100%;
+  height: 280px;
+  display: block;
+  object-fit: cover;
+}
+
+.cover-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  text-align: center;
+  padding: 1.5rem;
+}
+
+.compose-cover-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 1rem;
+  background: var(--surface);
+  border-top: 1px solid var(--line);
+}
+
+.compose-cover-bar input[type="file"] {
+  font-size: 0.85rem;
+  max-width: 220px;
+}
+
+.compose-status {
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin: 0;
+}
+
 .wrapper {
-    padding: 1rem;
-    border: 1px solid #ccc;
-    padding-top: 30px;
-    padding-bottom: 50px;
+  padding: 0;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  border-radius: 8px;
+  overflow: hidden;
 }
+
 .editor {
-    min-height: 250px;
-   padding: 1rem;
+  min-height: 320px;
+  padding: 1.15rem 1.2rem;
+  font-size: 1.05rem;
+  line-height: 1.7;
 }
+
 .toolbar {
-    border: 1px solid #ccc;
+  border: none;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+  margin-bottom: 0;
+}
+
+.compose-error {
+  color: var(--danger);
+  font-size: 0.92rem;
+  margin: 0 0 1rem;
+}
+
+.compose-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  border-top: 1px solid var(--line);
+  margin-top: 0.5rem;
+  padding-top: 1.25rem;
 }

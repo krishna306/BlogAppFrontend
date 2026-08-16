@@ -6,6 +6,12 @@ const initialState = {};
 export const userSlice = createSlice({
   name: "user",
   initialState,
+  reducers: {
+    clearSession(state) {
+      delete state.user;
+      delete state.token;
+    },
+  },
   extraReducers: (builder) => {
     builder.addMatcher(
       appApi.endpoints.signupUser.matchFulfilled,
@@ -26,7 +32,12 @@ export const userSlice = createSlice({
       delete state.user;
       delete state.token;
     });
+    builder.addMatcher(appApi.endpoints.logoutUser.matchRejected, (state) => {
+      delete state.user;
+      delete state.token;
+    });
   },
 });
 
+export const { clearSession } = userSlice.actions;
 export default userSlice.reducer;
