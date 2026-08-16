@@ -1,9 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import { useGetAllUserPostQuery } from "../services/appApi";
-import { Spinner, Container, Row, Col } from "react-bootstrap";
+import { Spinner, Container, Row, Col, Pagination } from "react-bootstrap";
 import ArticlePreview from "../Components/ArticlePreview";
+
+const PAGE_SIZE = 9;
+
 function MyArticle() {
-  const { data: userArticles, isError, isLoading } = useGetAllUserPostQuery();
+  const [page, setPage] = useState(1);
+  const { data, isError, isLoading, isFetching } = useGetAllUserPostQuery({
+    page,
+    limit: PAGE_SIZE,
+  });
+  const userArticles = data?.posts ?? [];
+  const totalPages = data?.totalPages ?? 1;
+
   if (isError) {
     return (
       <div>
@@ -32,13 +42,36 @@ function MyArticle() {
       <h1 className="text-center ">My Articles</h1>
       <Row>
         <Col md={9} className="d-flex justify-content-center flex-wrap gap-4">
-          {userArticles.map((article, idx) => (
+          {userArticles.map((article) => (
             <ArticlePreview
               article={article}
               currentUserPost={true}
-              key={idx}
+              key={article._id}
             />
           ))}
+          {totalPages > 1 && (
+            <div className="w-100 d-flex justify-content-center pt-3">
+              <Pagination>
+                <Pagination.Prev
+                  disabled={page <= 1 || isFetching}
+                  onClick={() => setPage(page - 1)}
+                />
+                {Array.from({ length: totalPages }, (_, idx) => idx + 1).map((p) => (
+                  <Pagination.Item
+                    key={p}
+                    active={p === page}
+                    onClick={() => setPage(p)}
+                  >
+                    {p}
+                  </Pagination.Item>
+                ))}
+                <Pagination.Next
+                  disabled={page >= totalPages || isFetching}
+                  onClick={() => setPage(page + 1)}
+                />
+              </Pagination>
+            </div>
+          )}
         </Col>
         <Col md={3}></Col>
       </Row>

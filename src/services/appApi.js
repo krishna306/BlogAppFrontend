@@ -3,8 +3,8 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const appApi = createApi({
   reducerPath: "appApi",
   baseQuery: fetchBaseQuery({
-    // baseUrl: "http://localhost:8080",
-    baseUrl:"https://blog-app-ruby-sigma.vercel.app/",
+    baseUrl: "http://localhost:8080",
+    // baseUrl: "https://blog-app-ruby-sigma.vercel.app/",
     prepareHeaders: (headers, { getState }) => {
       const token = getState().user.token;
       if (token) {
@@ -46,8 +46,9 @@ export const appApi = createApi({
     }),
 
     getAllPost: builder.query({
-      query: () => ({
+      query: ({ page = 1, limit = 9 } = {}) => ({
         url: "/posts",
+        params: { page, limit },
       }),
       providesTags: ["Post"],
     }),
@@ -57,8 +58,9 @@ export const appApi = createApi({
       }),
     }),
     getAllUserPost: builder.query({
-      query: (id) => ({
-        url: `/posts/me`,
+      query: ({ page = 1, limit = 9 } = {}) => ({
+        url: "/posts/me",
+        params: { page, limit },
       }),
       providesTags: ["Post"],
     }),
