@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Container, Form, Row, Col, Button, Spinner } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
+import { Container, Form, Button, Spinner } from "react-bootstrap";
 import {
   EditorState,
   convertToRaw,
@@ -7,114 +7,175 @@ import {
   convertFromHTML,
 } from "draft-js";
 import { Editor } from "react-draft-wysiwyg";
-import { useUpdatePostMutation } from "../services/appApi";
+import {
+  useGetOnePostQuery,
+  useUpdatePostMutation,
+} from "../services/appApi";
 import "./NewArticle.css";
-import { useNavigate } from "react-router-dom";
-import { useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
 import draftToHtml from "draftjs-to-html";
+import { CATEGORIES } from "../constants/categories";
+import CoverImage from "../Components/CoverImage";
+
+const editorToolbar = {
+  inline: { inDropdown: true },
+  list: { inDropdown: true },
+  textAlign: { inDropdown: true },
+  link: { inDropdown: true },
+  history: { inDropdown: true },
+};
+
+function htmlToEditorState(html) {
+  const blocksFromHtml = convertFromHTML(html || "<p></p>");
+  const contentState = ContentState.createFromBlockArray(
+    blocksFromHtml.contentBlocks || [],
+    blocksFromHtml.entityMap
+  );
+  return EditorState.createWithContent(contentState);
+}
+
 function EditArticle() {
   const { id } = useParams();
-  const posts = useSelector((state) => state.post);
-  const postToEdit = posts.find((post) => post._id === id);
-  const [updateArticle, { isLoading, isSuccess }] = useUpdatePostMutation();
-  const [title, setTitle] = useState(postToEdit.title);
-  const [url] = useState(postToEdit.image);
-  const contentDataState = ContentState.createFromBlockArray(
-    convertFromHTML(postToEdit.content)
+  const navigate = useNavigate();
+  const {
+    data: article,
+    isLoading: isLoadingPost,
+    isError,
+  } = useGetOnePostQuery(id);
+  const [updateArticle, { isLoading: isSaving, isSuccess }] =
+    useUpdatePostMutation();
+  const [title, setTitle] = useState("");
+  const [category, setCategory] = useState("");
+  const [url, setUrl] = useState("");
+  const [error, setError] = useState("");
+  const [editorState, setEditorState] = useState(() =>
+    EditorState.createEmpty()
   );
 
-  const editorDataState = EditorState.createWithContent(contentDataState);
-
-  const navigate = useNavigate();
-  const [editorState, setEditorState] = useState(editorDataState);
+  useEffect(() => {
+    if (!article) return;
+    setTitle(article.title || "");
+    setCategory(article.category || "");
+    setUrl(article.image || "");
+    setEditorState(htmlToEditorState(article.content));
+  }, [article]);
 
   function handleUpdate(e) {
     e.preventDefault();
-    const rawContentState = convertToRaw(editorState.getCurrentContent())
-    const content = draftToHtml(rawContentState);
-    if(!title || !content){
-      return alert("Title and content required");
+    const content = draftToHtml(convertToRaw(editorState.getCurrentContent()));
+    const hasText = editorState.getCurrentContent().hasText();
+    if (!title.trim() || !hasText || !category) {
+      setError("Title, story, and category are required.");
+      return;
     }
-    else {
-      updateArticle({id,title,content}).then((res)=> console.log(res));
-    }
-  }
-  function handleEditorChange(state) {
-    setEditorState(state);
+    setError("");
+    updateArticle({ id, title: title.trim(), content, category });
   }
 
-  if (isLoading) {
+  if (isLoadingPost) {
     return (
-      <div className="text-center mt-5">
-      <Spinner animation="border" variant="primary" role="status" />
-      <br />
-      <h2 className="py-2">Updating Your Article...</h2>
-    </div>
-    );
-  }
-  if (isSuccess) {
-    setTimeout(() => {
-      navigate("/");
-    }, 2000);
-    return (
-      <div>
-        <h1 className="py-4 text-center">Article updated with success</h1>
+      <div className="loading-state">
+        <Spinner animation="border" variant="dark" role="status" />
+        <h2 className="py-2">Loading story…</h2>
       </div>
     );
   }
+
+  if (isError || !article) {
+    return (
+      <div className="empty-state">
+        <h1>Story not found</h1>
+        <p>This post could not be loaded for editing.</p>
+      </div>
+    );
+  }
+
+  if (isSaving) {
+    return (
+      <div className="loading-state">
+        <Spinner animation="border" variant="dark" role="status" />
+        <h2 className="py-2">Saving…</h2>
+      </div>
+    );
+  }
+
+  if (isSuccess) {
+    setTimeout(() => navigate("/"), 1500);
+    return (
+      <div className="empty-state">
+        <h1>Story updated</h1>
+        <p>Taking you back to Inkline.</p>
+      </div>
+    );
+  }
+
   return (
-    <Container>
-      <Row>
-        <Col md={7}>
-          <Form onSubmit={handleUpdate}>
-            <h1 className="text-center">Edit Article</h1>
-            <Form.Group className="mb-3">
-              <Form.Label>Title</Form.Label>
-              <Form.Control
-                type="text"
-                value={title}
-                placeholder="Your title"
-                onChange={(e) => setTitle(e.target.value)}
-              />
-            </Form.Group>
+    <Container className="page-shell">
+      <div className="compose-stack">
+        <h1 className="compose-title">Edit story</h1>
+        <p className="compose-kicker">Update this Inkline post</p>
+        <Form onSubmit={handleUpdate}>
+          {error && <p className="compose-error">{error}</p>}
+
+          <div className="compose-block">
+            <div className="compose-label">Cover</div>
+            <div className="compose-cover">
+              {url ? (
+                <CoverImage className="cover-frame" src={url} alt="Cover" />
+              ) : (
+                <div className="cover-placeholder">No cover image</div>
+              )}
+            </div>
+          </div>
+
+          <div className="compose-block">
+            <div className="compose-label">Title</div>
+            <Form.Control
+              className="compose-title-input"
+              type="text"
+              value={title}
+              placeholder="Give it a title"
+              onChange={(e) => setTitle(e.target.value)}
+            />
+          </div>
+
+          <div className="compose-block">
+            <div className="compose-label">Category</div>
+            <div className="category-bar" style={{ margin: 0 }}>
+              {CATEGORIES.map((item) => (
+                <button
+                  type="button"
+                  key={item.value}
+                  className={`category-chip${
+                    category === item.value ? " is-active" : ""
+                  }`}
+                  onClick={() => setCategory(item.value)}
+                >
+                  {item.shortLabel}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="compose-block">
+            <div className="compose-label">Story</div>
             <Editor
               editorState={editorState}
-              onEditorStateChange={handleEditorChange}
-              wrapperClassName="wrapper mb-4"
+              onEditorStateChange={setEditorState}
+              wrapperClassName="wrapper"
               editorClassName="editor"
               toolbarClassName="toolbar"
-              toolbar={{
-                inline: { inDropdown: true },
-                list: { inDropdown: true },
-                textAlign: { inDropdown: true },
-                link: { inDropdown: true },
-                history: { inDropdown: true },
-              }}
+              toolbar={editorToolbar}
             />
-            <Form.Select className="mb-4">
-              <option>Select Category</option>
-              <option value="technology">Technology</option>
-              <option value="travel">Travel</option>
-              <option value="web-design">Web Design</option>
-              <option value="programming">Programming</option>
-              <option value="ai">Artificial Intelligence</option>
-            </Form.Select>
-            <Button variant="primary" type="submit">
-              Update Article
+          </div>
+
+          <div className="compose-actions">
+            <Button className="btn-accent" type="submit">
+              Save
             </Button>
-          </Form>
-        </Col>
-        <Col
-          md={5}
-          className="d-flex justify-content-center align-items-center"
-        >
-          <img
-            src={url}
-            style={{ width: "100%", minHeight: "80vh", objectFit: "cover" }}
-          />
-        </Col>
-      </Row>
+          </div>
+        </Form>
+      </div>
     </Container>
   );
 }

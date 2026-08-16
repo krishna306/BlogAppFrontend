@@ -1,14 +1,15 @@
 import React, { useState } from "react";
-import { Container, Row, Col, Form, Button } from "react-bootstrap";
+import { Container, Form, Button } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
-import "./Signup.css";
-
+import "./Auth.css";
 import { useSignupUserMutation } from "../services/appApi";
+
 function Signup() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [signup, { data, isLoading, isError, error }] = useSignupUserMutation();
+  const [signup, { isLoading, isError, error }] = useSignupUserMutation();
+
   function handleSignup(e) {
     e.preventDefault();
     signup({ email, password }).then(({ error }) => {
@@ -17,50 +18,46 @@ function Signup() {
       }
     });
   }
-  return (
-    <Container>
-      <Row>
-        <Col
-          md={7}
-          className="d-flex align-items-center justify-content-center"
-        >
-          <Form className="signup-form" onSubmit={handleSignup}>
-            <h1 className="text-center">Creat account</h1>
-            {isError && <p className="alert text-center alert-danger">{error.data}</p>}
-            <Form.Group className="mb-3" controlId="formBasicEmail">
-              <Form.Label>Email address</Form.Label>
-              <Form.Control
-                type="email"
-                placeholder="Enter email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              <Form.Text className="text-muted">
-                We'll never share your email with anyone else.
-              </Form.Text>
-            </Form.Group>
 
-            <Form.Group className="mb-3" controlId="formBasicPassword">
-              <Form.Label>Password</Form.Label>
-              <Form.Control
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </Form.Group>
-            <Button variant="primary" type="submit" disabled={isLoading}>
-              Signup
+  return (
+    <Container className="page-shell">
+      <div className="auth-card">
+        <h1 className="auth-title">Join Inkline</h1>
+        <p className="auth-kicker">Create an account to publish stories</p>
+        <Form onSubmit={handleSignup}>
+          {isError && (
+            <p className="auth-error">{error?.data || "Could not create account."}</p>
+          )}
+          <Form.Group className="mb-3" controlId="signupEmail">
+            <Form.Label>Email</Form.Label>
+            <Form.Control
+              type="email"
+              placeholder="you@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </Form.Group>
+          <Form.Group className="mb-4" controlId="signupPassword">
+            <Form.Label>Password</Form.Label>
+            <Form.Control
+              type="password"
+              placeholder="Choose a password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </Form.Group>
+          <div className="auth-actions">
+            <Button className="btn-accent" type="submit" disabled={isLoading}>
+              {isLoading ? "Creating account…" : "Create account"}
             </Button>
-            <div className="py-4">
-              <p className="text-center">
-                Already have an account? <Link to="/login">Login</Link>
-              </p>
-            </div>
-          </Form>
-        </Col>
-        <Col md={5} className="signup-bg-container"></Col>
-      </Row>
+          </div>
+        </Form>
+        <p className="auth-switch">
+          Already have an account? <Link to="/login">Sign in</Link>
+        </p>
+      </div>
     </Container>
   );
 }

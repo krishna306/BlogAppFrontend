@@ -10,8 +10,6 @@ import NewArticle from "./pages/NewArticle";
 import NotFound from "./pages/NotFound";
 import Signup from "./pages/Signup";
 import SingleArticlePage from "./pages/SingleArticlePage";
-import MainArticle from "./Components/MainArticle";
-import ArticlePreview from "./Components/ArticlePreview";
 import Home from "./pages/Home";
 function App() {
   const { user } = useSelector((state) => state.user);

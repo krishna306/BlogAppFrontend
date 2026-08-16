@@ -3,8 +3,8 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const appApi = createApi({
   reducerPath: "appApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:8080",
-    // baseUrl: "https://blog-app-ruby-sigma.vercel.app/",
+    // baseUrl: "http://localhost:8080",
+    baseUrl: "https://blog-app-ruby-sigma.vercel.app/",
     prepareHeaders: (headers, { getState }) => {
       const token = getState().user.token;
       if (token) {
@@ -46,9 +46,9 @@ export const appApi = createApi({
     }),
 
     getAllPost: builder.query({
-      query: ({ page = 1, limit = 9 } = {}) => ({
+      query: ({ page = 1, limit = 9, category = "all" } = {}) => ({
         url: "/posts",
-        params: { page, limit },
+        params: { page, limit, category },
       }),
       providesTags: ["Post"],
     }),
@@ -56,6 +56,7 @@ export const appApi = createApi({
       query: (id) => ({
         url: `/posts/${id}`,
       }),
+      providesTags: (result, error, id) => [{ type: "Post", id }],
     }),
     getAllUserPost: builder.query({
       query: ({ page = 1, limit = 9 } = {}) => ({
@@ -69,15 +70,18 @@ export const appApi = createApi({
         url: `/posts/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["Post"],
+      invalidatesTags: (result, error, id) => ["Post", { type: "Post", id }],
     }),
     updatePost: builder.mutation({
-      query: ({id,...post}) => ({
+      query: ({ id, ...post }) => ({
         url: `/posts/${id}`,
         method: "PATCH",
-        body:post
+        body: post,
       }),
-      invalidatesTags: ["Post"],
+      invalidatesTags: (result, error, { id }) => [
+        "Post",
+        { type: "Post", id },
+      ],
     }),
 
   }),
