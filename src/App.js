@@ -11,6 +11,8 @@ import NotFound from "./pages/NotFound";
 import Signup from "./pages/Signup";
 import SingleArticlePage from "./pages/SingleArticlePage";
 import Home from "./pages/Home";
+import Dashboard from "./pages/Dashboard";
+import { isAdminUser } from "./utils/admin";
 function App() {
   const { user } = useSelector((state) => state.user);
   return (
@@ -28,7 +30,10 @@ function App() {
           <>
             <Route path="/new-article" element={<NewArticle />} />
             <Route path="/articles/:id/edit" element={<EditArticle />} />
-          <Route path ="/articles/me" element = {<MyArticle />} />
+            <Route path="/articles/me" element={<MyArticle />} />
+            {isAdminUser(user) && (
+              <Route path="/dashboard" element={<Dashboard />} />
+            )}
           </>
         )}
         <Route path = "/articles/:id" element ={<SingleArticlePage />} />

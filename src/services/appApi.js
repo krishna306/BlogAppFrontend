@@ -65,6 +65,12 @@ export const appApi = createApi({
       }),
       providesTags: ["Post"],
     }),
+    getAdminOverview: builder.query({
+      query: () => ({
+        url: "/admin/overview",
+      }),
+      providesTags: ["Post", "User"],
+    }),
     deletePost: builder.mutation({
       query: (id) => ({
         url: `/posts/${id}`,
@@ -96,6 +102,7 @@ export const {
   useGetAllPostQuery,
   useGetOnePostQuery,
   useGetAllUserPostQuery,
+  useGetAdminOverviewQuery,
   useDeletePostMutation,
   useUpdatePostMutation
 } = appApi;

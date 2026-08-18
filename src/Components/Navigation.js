@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useLogoutUserMutation } from "../services/appApi";
 import { clearSession } from "../features/userSlice";
 import logo from "../images/inkline-logo.png";
+import { isAdminUser } from "../utils/admin";
 
 function accountInitial(email) {
   return (email || "A").trim().charAt(0).toUpperCase();
@@ -78,6 +79,11 @@ function Navigation() {
                   <LinkContainer to="/articles/me">
                     <NavDropdown.Item>My articles</NavDropdown.Item>
                   </LinkContainer>
+                  {isAdminUser(user) && (
+                    <LinkContainer to="/dashboard">
+                      <NavDropdown.Item>Dashboard</NavDropdown.Item>
+                    </LinkContainer>
+                  )}
                   <LinkContainer to="/new-article">
                     <NavDropdown.Item>Write a story</NavDropdown.Item>
                   </LinkContainer>
